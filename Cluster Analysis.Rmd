@@ -1,0 +1,841 @@
+---
+title: "CLUSTER ANALYSIS"
+author: "SOFTANBEES TECHNOLOGIES PVT. LTD."
+
+output:
+  html_document:
+    toc: true
+    toc_float: true   
+---
+
+
+<h1>**Basic idea about Cluster Analysis**</h1>
+\
+
+<h1> **1. Introduction**</h1> 
+\
+
+- **What is Clustering?**
+\
+Clustering is the classification of data objects into similarity groups (clusters) according to a defined distance measure.
+It is used in many fields, such as machine learning, data mining, pattern recognition, image analysis, genomics, systems biology, etc.
+Machine learning typically regards data clustering as a form of unsupervised learning.
+
+- **Why Clustering in R?**\
+
+i. Efficient data structures and functions for clustering\
+
+ii. Reproducible and programmable\
+
+iii. Comprehensive set of clustering and machine learning libraries\
+
+iv. Integration with many other data analysis tools\
+
+\
+
+- **What is the purpose of clustering?**
+\
+
+The members of a cluster are more like each other than they are like members of other clusters. The goal of clustering analysis is to find high-quality clusters such that the inter-cluster similarity is low and the intra-cluster similarity is high. Clustering, like classification, is used to segment the data.
+\
+
+\
+ **What is the goal of clustering?**
+\
+
+The goal of clustering is to identify distinct groups in a dataset. Assessment and pruning of hierarchical model-based clustering. The goal of clustering is to identify distinct groups in a dataset.
+\
+\
+<h2> Types of clustering algorithms</h2> \
+
+Since the task of clustering is subjective, the means that can be used for achieving this goal are plenty. Every methodology follows a different set of rules for defining the ‘similarity’ among data points. In fact, there are more than 100 clustering algorithms known. But few of the algorithms are used popularly, let’s look at them in detail:
+
+
+- **Connectivity models:**  As the name suggests, these models are based on the notion that the data points closer in data space exhibit more similarity to each other than the data points lying farther away. These models can follow two approaches. In the first approach, they start with classifying all data points into separate clusters & then aggregating them as the distance decreases. In the second approach, all data points are classified as a single cluster and then partitioned as the distance increases. Also, the choice of distance function is subjective. These models are very easy to interpret but lacks scalability for handling big datasets. Examples of these models are hierarchical clustering algorithm and its variants.\
+\
+
+- **Centroid models:**  These are iterative clustering algorithms in which the notion of similarity is derived by the closeness of a data point to the centroid of the clusters. K-Means clustering algorithm is a popular algorithm that falls into this category. In these models, the no. of clusters required at the end have to be mentioned beforehand, which makes it important to have prior knowledge of the dataset. These models run iteratively to find the local optima.\
+\
+
+- **Distribution models:** These clustering models are based on the notion of how probable is it that all data points in the cluster belong to the same distribution (For example: Normal, Gaussian). These models often suffer from overfitting. A popular example of these models is Expectation-maximization algorithm which uses multivariate normal distributions.\
+
+- **Density Models:**  These models search the data space for areas of varied density of data points in the data space. It isolates various different density regions and assign the data points within these regions in the same cluster. Popular examples of density models are DBSCAN and OPTICS.
+\
+
+<h2> Applications of Clustering</h2> 
+
+Clustering has a large no. of applications spread across various domains. Some of the most popular applications of clustering are:
+
+i.Recommendation engines\
+
+ii. Market segmentation\
+
+iii. Social network analysis\
+
+iv. Search result grouping\
+
+v. Medical imaging\
+
+vi. Image segmentation\
+
+vii. Anomaly detection\
+\
+
+
+
+<h1>**2. Data Preprocessing**</h1>
+\
+
+## 2.1 Data Transformations
+\
+    Choice depends on data set!
+    \
+- Center and standardize
+
+i. Center: subtract from each value the mean of the corresponding vector\
+
+ii. Standardize: devide by standard deviation\
+
+**Result:** Mean = 0 and STDEV = 1
+\
+
+- Center and scale with the scale() function\
+
+i. Center: subtract from each value the mean of the corresponding vector\
+
+ii. Scale: divide centered vector by their root mean square (rms):\
+
+$$
+\begin{align}
+x_{rms} = \sqrt[]{\frac{1}{n-1}\sum_{i=1}^{n}{x_{i}{^2}}}
+\end{align}\
+$$
+**Result:** Mean = 0 and STDEV = 1
+
+\
+
+- Log transformation\
+
+- Rank transformation: replace measured values by ranks\
+
+- No transformation\
+\
+\
+<h2> 2.2 Distance Methods</h2>
+\
+
+List of most common ones!
+
+- Euclidean distance for two profiles X and Y:
+\
+$$
+\begin{align}
+d(X,Y) = \sqrt[]{ \sum_{i=1}^{n}{(x_{i}-y_{i})^2} }
+\end{align}\
+$$
+ 
+ 
+  - Disadvantages: not scale invariant, not for negative correlations\
+  
+- Maximum, Manhattan, Canberra, binary, Minowski, …\
+
+- Correlation-based distance: 1-r\
+
+- Pearson correlation coefficient (PCC):\
+
+\
+
+$$
+\begin{align}
+r = \frac{n\sum_{i=1}^{n}{x_{i}y_{i}} - \sum_{i=1}^{n}{x_{i}} \sum_{i=1}^{n}{y_{i}}}{ \sqrt[]{(\sum_{i=1}^{n}{x_{i}^2} - (\sum_{i=1}^{n}{x_{i})^2}) (\sum_{i=1}^{n}{y_{i}^2} - (\sum_{i=1}^{n}{y_{i})^2})} }
+\end{align}\
+$$
+
+
+
+- Disadvantage: outlier sensitive\
+
+- Spearman correlation coefficient (SCC)\
+
+- Same calculation as PCC but with ranked values!\
+\
+
+There are many more distance measures
+
+- If the distances among items are quantifiable, then clustering is possible.\
+
+- Choose the most accurate and meaningful distance measure for a given field of application.\
+
+- If uncertain then choose several distance measures and compare the results.\
+\
+\
+<h2>2.3 Cluster Linkage</h2>
+\
+\
+
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\Cluster_Linkage.png)
+
+
+\
+<h1> **3. Clustering Algorithms**\
+
+<h2> 3.1 Hierarchical Clustering</h2> 
+\
+<h3>3.1.1 Overview of algorithm</h3>
+\
+
+- Identify clusters (items) with closest distance\
+- Join them to new clusters\
+- Compute distance between clusters (items)\
+- Return to step 1\
+\
+
+**Hierarchical clustering: agglomerative Approach**\
+\
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\Hierarchical clustering.png)
+\
+
+**Hierarchical Clustering with Heatmap**
+\
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\Heatmap.png)
+\
+\
+- A heatmap is a color coded table. To visually identify patterns, the rows and columns of a heatmap are often sorted by hierarchical clustering trees.\
+
+- In case of gene expression data, the row tree usually represents the genes, the column tree the treatments and the colors in the heat table represent the intensities or ratios of the underlying gene expression data set.\
+
+\
+<h3>3.1.2 Hierarchical Clustering Approaches</h3> 
+\
+1. Agglomerative approach (bottom-up)\
+   - R functions: hclust() and agnes()
+   \
+2. Divisive approach (top-down)\
+   - R function: diana()
+\
+
+<h3>3.1.3 Tree Cutting to Obtain Discrete Clusters</h3> 
+\
+1. Node height in tree\
+
+2. Number of clusters\
+
+3. Search tree nodes by distance cutoff\
+\
+\
+<h3> 3.1.4 Examples</h3> 
+\
+**Using hclust and heatmap.2**
+\
+```{r}
+library(gplots) 
+y <- matrix(rnorm(500), 100, 5, dimnames=list(paste("g", 1:100, sep=""), paste("t", 1:5, sep=""))) 
+heatmap.2(y) 
+# Shortcut to final result
+```
+
+\
+\
+
+
+**Stepwise Approach with Tree Cutting**
+\
+```{r}
+## Row- and column-wise clustering 
+hr <- hclust(as.dist(1-cor(t(y), method="pearson")), method="complete")
+hc <- hclust(as.dist(1-cor(y, method="spearman")), method="complete") 
+
+## Tree cutting
+mycl <- cutree(hr, h=max(hr$height)/1.5); mycolhc <- rainbow(length(unique(mycl)), start=0.1, end=0.9); mycolhc <- mycolhc[as.vector(mycl)] 
+
+## Plot heatmap 
+mycol <- colorpanel(40, "darkblue", "yellow", "white") # or try redgreen(75)
+heatmap.2(y, Rowv=as.dendrogram(hr), Colv=as.dendrogram(hc), col=mycol, scale="row", density.info="none", trace="none", RowSideColors=mycolhc) 
+```
+
+\
+\
+<h2> 3.2 K-Means Clustering</h2> 
+\
+
+**Overview of algorithm**
+\
+1. Choose the number of k clusters\
+
+2. Randomly assign items to the k clusters\
+
+3. Calculate new centroid for each of the k clusters\
+
+4. Calculate the distance of all items to the k centroids\
+
+5. Assign items to closest centroid\
+
+6. Repeat until clusters assignments are stable\
+\
+
+\
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\algorithm.png)
+
+\
+\
+<h3> Examples</h3> 
+\
+```{r}
+km <- kmeans(t(scale(t(y))), 3)
+km$cluster 
+```
+
+\
+<h2> 3.3 Fuzzy C-Means Clustering</h2> 
+\
+
+- In contrast to strict (hard) clustering approaches, fuzzy (soft) clustering methods allow multiple cluster memberships of the clustered items (Hathaway, Bezdek, and Pal 1996).\
+- This is commonly achieved by assigning to each item a weight of belonging to each cluster.\
+
+- Thus, items at the edge of a cluster, may be in a cluster to a lesser degree than items at the center of a cluster.\
+
+- Typically, each item has as many coefficients (weights) as there are clusters that sum up for each item to one.\
+
+\
+
+<h3> Examples</h3> 
+\
+**Fuzzy Clustering with fanny**
+\
+```{r}
+# Loads the cluster library.
+library(cluster) 
+fannyy <- fanny(y, k=4, metric = "euclidean", memb.exp = 1.2)
+round(fannyy$membership, 2)[1:4,]
+```
+\
+\
+```{r}
+fannyy$clustering 
+
+```
+\
+\
+\
+<h2>3.4 Principal Component Analysis (PCA)</h2> 
+\
+Principal components analysis (PCA) is a data reduction technique that allows to simplify multidimensional data sets to 2 or 3 dimensions for plotting purposes and visual variance analysis.
+\
+<h3> Basic Steps</h3> 
+\
+- Center (and standardize) data\
+
+- First principal component axis\
+
+   i.  Across centroid of data cloud\
+   
+   ii.  Distance of each point to that line is minimized, so that it crosses the maximum variation of the data cloud\
+   \
+   
+- Second principal component axis
+    i. Orthogonal to first principal component\
+    
+    ii. Along maximum variation in the data \
+    
+- First PCA axis becomes x-axis and second PCA axis y-axis\
+- Continue process until the necessary number of principal components is obtained\
+\
+
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\Basic.png)
+
+\
+<h3>Example</h3> 
+\
+```{r}
+pca <- prcomp(y, scale=T)
+summary(pca) 
+# Prints variance summary for all principal components
+```
+\
+\
+```{r}
+plot(pca$x, pch=20, col="blue", type="n") # To plot dots, drop type="n"
+text(pca$x, rownames(pca$x), cex=0.8)
+```
+
+1st and 2nd principal\
+\
+components explain x% of variance in data.
+
+\
+\
+<h2> 3.5. Multidimensional Scaling (MDS)</h2>
+\
+
+- Alternative dimensionality reduction approach\
+
+- Represents distances in 2D or 3D space\
+
+- Starts from distance matrix (PCA uses data points)\
+\
+
+<h3>Example</h3> 
+\
+\
+The following example performs MDS analysis with cmdscale on the geographic distances among European cities.
+
+\
+
+```{r}
+loc <- cmdscale(eurodist) 
+plot(loc[,1], -loc[,2], type="n", xlab="", ylab="", main="cmdscale(eurodist)")
+text(loc[,1], -loc[,2], rownames(loc), cex=0.8) 
+```
+
+\
+\
+<h2> 3.6. Biclustering</h2> \
+\
+Finds in matrix subgroups of rows and columns which are as similar as possible to each other and as different as possible to the remaining data points.
+
+\
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\Biclustering.png)
+\
+\
+<h2> 3.7 Similarity Measures for Clusters</h2> 
+
+
+- Compare the numbers of identical and unique item pairs appearing in cluster sets.\
+
+- Achieved by counting the number of item pairs found in both clustering sets (a) as well as the pairs appearing only in the first (b) or the second (c) set.\
+
+- With this a similarity coefficient, such as the Jaccard index, can be computed. The latter is defined as the size of the intersect divided by the size of the union of two sample sets: a/(a+b+c).\
+
+- In case of partitioning results, the Jaccard Index measures how frequently pairs of items are joined together in two clustering data sets and how often pairs are observed only in one set.\
+
+- Related coefficient are the Rand Index and the Adjusted Rand Index. These indices also consider the number of pairs (d) that are not joined together in any of the clusters in both sets.\
+\
+<h3> Example:</h3> 
+\
+**Jaccard index for cluster sets**\
+
+The following imports the cindex() function and computes the Jaccard Index for two sample clusters.\
+\
+
+```{r}
+source("http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/My_R_Scripts/clusterIndex.R") 
+library(cluster); y <- matrix(rnorm(5000), 1000, 5, dimnames=list(paste("g", 1:1000, sep=""), paste("t", 1:5, sep=""))); clarax <- clara(y, 49); clV1 <- clarax$clustering; clarax <- clara(y, 50); clV2 <- clarax$clustering 
+ci <- cindex(clV1=clV1, clV2=clV2, self=FALSE, minSZ=1, method="jaccard")
+ci[2:3] 
+
+# Returns Jaccard index and variables used to compute it 
+```
+\
+**Clustering cluster sets with Jaccard index**
+\
+
+The following example shows how one can cluster entire cluster result sets. First, 10 sample cluster results are created with Clara using k-values from 3 to 12. \
+
+The results are stored as named clustering vectors in a list object. Then a nested sapply loop is used to generate a similarity matrix of Jaccard Indices for the clustering results. After converting the result into a distance matrix, hierarchical clustering is performed with **hclust.**
+\
+
+```{r}
+clVlist <- lapply(3:12, function(x) clara(y[1:30, ], k=x)$clustering); names(clVlist) <- paste("k", "=", 3:12)
+d <- sapply(names(clVlist), function(x) sapply(names(clVlist), function(y) cindex(clV1=clVlist[[y]], clV2=clVlist[[x]], method="jaccard")[[3]]))
+hv <- hclust(as.dist(1-d))
+plot(as.dendrogram(hv), edgePar=list(col=3, lwd=4), horiz=T, main="Similarities of 10 Clara Clustering Results for k: 3-12") 
+```
+
+\
+\
+- Remember: there are many additional clustering algorithms.\
+
+- Additional details can be found in the Clustering Section o\
+\
+\
+\
+ 
+<h1>**4. Clustering Exercises**</h1> 
+\
+\
+
+<h2> 4.1. Data Preprocessing</h2> \
+\
+**Scaling**
+\
+```{r}
+## Sample data set
+
+set.seed(1410)
+y <- matrix(rnorm(50), 10, 5, dimnames=list(paste("g", 1:10, sep=""), 
+            paste("t", 1:5, sep="")))
+dim(y)
+```
+\
+\
+```{r}
+## Scaling
+
+yscaled <- t(scale(t(y))) # Centers and scales y row-wise
+apply(yscaled, 1, sd)
+```
+
+\
+\
+
+<h2> 4.2. Distance Matrices</h2> 
+\
+
+<h3>  Euclidean distance matrix</h3> 
+\
+```{r}
+dist(y[1:4,], method = "euclidean")
+
+```
+\
+\
+<h3> Correlation-based distance matrix</h3> 
+\
+**Correlation matrix**
+\
+```{r}
+c <- cor(t(y), method="pearson") 
+as.matrix(c)[1:4,1:4]
+```
+\
+**Correlation-based distance matrix**
+\
+\
+```{r}
+d <- as.dist(1-c)
+as.matrix(d)[1:4,1:4]
+```
+\
+\
+<h2> 4.3 Hierarchical Clustering with hclust</h2> 
+\
+\
+**Hierarchical clustering with complete linkage and basic tree plotting**
+\
+```{r}
+hr <- hclust(d, method = "complete", members=NULL)
+names(hr)
+```
+\
+\
+```{r}
+par(mfrow = c(1, 2)); plot(hr, hang = 0.1); plot(hr, hang = -1) 
+
+```
+
+
+\
+\
+<h3> Tree plotting I</h3> 
+\
+```{r}
+plot(as.dendrogram(hr), edgePar=list(col=3, lwd=4), horiz=T) 
+
+```
+
+
+
+\
+<h3> Tree plotting II</h3> 
+\
+
+The ape library provides more advanced features for tree plotting.
+\
+```{r}
+library(ape) 
+plot.phylo(as.phylo(hr), type="p", edge.col=4, edge.width=2, 
+           show.node.label=TRUE, no.margin=TRUE)
+```
+
+\
+
+<h2> 4.4 Tree Cutting</h2> 
+\
+Accessing information in **hclust** objects
+\
+```{r}
+hr
+```
+
+```{r}
+## Print row labels in the order they appear in the tree
+
+
+hr$labels[hr$order] 
+```
+
+\
+\
+Tree cutting with **cutree**
+\
+
+```{r}
+mycl <- cutree(hr, h=max(hr$height)/2)
+mycl[hr$labels[hr$order]] 
+```
+\
+\
+<h2> 4.5 Heatmaps</h2> 
+\
+
+<h3> With heatmap.2</h3>
+\
+All in one step: clustering and heatmap plotting
+
+\
+\
+```{r}
+library(gplots)
+heatmap.2(y, col=redgreen(75))
+```
+\
+\
+<h3>With **pheatmap**</h3> 
+\
+All in one step: clustering and heatmap plotting\
+\
+<span>Code</span>
+\
+```{r}
+library(pheatmap); library("RColorBrewer")
+pheatmap(y, color=brewer.pal(9,"Blues"))
+```
+
+
+\
+<h3> Customizing heatmaps</h3>
+\
+Customizes row and column clustering and shows tree cutting result in row color bar.
+\
+```{r}
+hc <- hclust(as.dist(1-cor(y, method="spearman")), method="complete")
+mycol <- colorpanel(40, "darkblue", "yellow", "white")
+heatmap.2(y, Rowv=as.dendrogram(hr), Colv=as.dendrogram(hc), col=mycol,
+          scale="row", density.info="none", trace="none", 
+          RowSideColors=as.character(mycl))
+```
+
+<h2> 4.6 K-Means Clustering with PAM</h2> 
+\
+Runs K-means clustering with PAM (partitioning around medoids) algorithm and shows result in color bar of hierarchical clustering result from before.
+\
+```{r}
+library(cluster)
+pamy <- pam(d, 4)
+(kmcol <- pamy$clustering)
+```
+
+\
+```{r}
+heatmap.2(y, Rowv=as.dendrogram(hr), Colv=as.dendrogram(hc), col=mycol,
+          scale="row", density.info="none", trace="none", 
+          RowSideColors=as.character(kmcol))
+```
+
+
+\
+
+<h2> 4.7 K-Means Fuzzy Clustering</h2> 
+\
+Performs k-means fuzzy clustering
+\
+
+```{r}
+library(cluster)
+fannyy <- fanny(d, k=4, memb.exp = 1.5)
+round(fannyy$membership, 2)[1:4,]
+```
+
+
+```{r}
+fannyy$clustering 
+
+```
+
+\
+\
+
+```{r}
+## Returns multiple cluster memberships for coefficient above a certain
+
+## value (here >0.1)
+
+fannyyMA <- round(fannyy$membership, 2) > 0.10 
+apply(fannyyMA, 1, function(x) paste(which(x), collapse="_"))
+```
+
+\
+\
+<h2> 4.8 Multidimensional Scaling (MDS)</h2> 
+\
+Performs MDS analysis on the geographic distances between European cities.
+\
+```{r}
+loc <- cmdscale(eurodist) 
+
+## Plots the MDS results in 2D plot. The minus is required in this example to 
+
+## flip the plotting orientation.
+
+plot(loc[,1], -loc[,2], type="n", xlab="", ylab="", main="cmdscale(eurodist)")
+text(loc[,1], -loc[,2], rownames(loc), cex=0.8) 
+```
+
+\
+\
+
+<h2>4.9 Principal Component Analysis (PCA)</h2> 
+\
+Performs PCA analysis after scaling the data. It returns a list with class prcomp that contains five components:
+\
+(1) the standard deviations (sdev) of the principal components, \
+
+(2) the matrix of eigenvectors (rotation), \
+
+(3) the principal component data (x),\
+
+(4) the centering (center) and (5) scaling (scale) used.\
+
+\
+
+```{r}
+library(scatterplot3d)
+pca <- prcomp(y, scale=TRUE)
+names(pca)
+```
+\
+\
+```{r}
+summary(pca) # Prints variance summary for all principal components.
+```
+\
+\
+```{r}
+scatterplot3d(pca$x[,1:3], pch=20, color="blue") 
+
+```
+
+\
+
+\
+<h1> **5. Version Information**</h1>
+\
+
+```{r}
+sessionInfo()
+
+```
+
+\
+\
+<h1>**6. K Means Clustering**</h1> 
+\
+Now I will be taking you through two of the most popular clustering algorithms in detail – K Means clustering and Hierarchical clustering. Let’s begin.
+\
+
+**K is the number of cluster**\
+
+The value of K is generally a small integer, such as 2, 3, 4 or 5, but may be larger
+Quality of a set of clusters is measured using an objective function 
+Objective function is the measure of sum of the squares of the distances of each point from the centroid of the cluster to which it is assigned. 
+
+variability(c)= ∑_(e∈c)distance(mean(c),e)2
+\
+c is a cluster, e is an instance of that cluster\
+
+discimilarity(C)= ∑_(c∈C)variability(c) \
+
+C ->all clusters\
+
+We would like the value of this function to be as small as possible.\
+
+
+
+
+K means is an iterative clustering algorithm that aims to find local maxima in each iteration. This algorithm works in these 5 steps :
+\
+
+1. Specify the desired number of clusters K : Let us choose k=2 for these 5 data points in 2-D space.
+
+\
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\01.JPG)
+
+\
+2. Randomly assign each data point to a cluster : Let’s assign three points in cluster 1 shown using red color and two points in cluster 2 shown using grey color.
+\
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\02.JPG)
+
+
+
+
+3. Compute cluster centroids : The centroid of data points in the red cluster is shown using red cross and those in grey cluster using grey cross.
+\
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\03.JPG)
+
+
+4. Re-assign each point to the closest cluster centroid : Note that only the data point at the bottom is assigned to the red cluster even though its closer to the centroid of grey cluster. Thus, we assign that data point into grey cluster.
+\
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\04.JPG)
+\
+
+5. Re-compute cluster centroids : Now, re-computing the centroids for both the clusters.
+\
+
+
+![](G:\DATA SCIENCE\SOFTANBEES\WORKING PROCEDURE\CLUSTER ANALYSIS\images\05.JPG)
+\
+
+6. Repeat steps 4 and 5 until no improvements are possible : Similarly, we’ll repeat the 4th and 5th steps until we’ll reach global optima. When there will be no further switching of data points between two clusters for two successive repeats. It will mark the termination of the algorithm if not explicitly mentioned.\
+\
+
+
+<h2> Difference between K Means and Hierarchical clustering</h2> 
+\
+
+- Hierarchical clustering can’t handle big data well but K Means clustering can. This is because the time complexity of K Means is linear i.e. O(n) while that of hierarchical clustering is quadratic i.e. O(n2).
+\
+
+- In K Means clustering, since we start with random choice of clusters, the results produced by running the algorithm multiple times might differ. While results are reproducible in Hierarchical clustering.
+\
+
+- K Means is found to work well when the shape of the clusters is hyper spherical (like circle in 2D, sphere in 3D).
+\
+
+- K Means clustering requires prior knowledge of K i.e. no. of clusters you want to divide your data into. But, you can stop at whatever number of clusters you find appropriate in hierarchical clustering by interpreting the dendrogram.
+\
+
+
+
+\
+<h1> Elbow method </h1> 
+\
+
+
+- **How do you use the elbow method?**
+\
+
+Elbow Method for optimal value of k in KMeans-
+\
+Step 1: Importing the required libraries.\
+\
+Step 2: Creating and Visualizing the data.
+\
+Step 3: Building the clustering model and calculating the values of the Distortion and Inertia.
+\
+Step 4: Tabulating and Visualizing the results.
+\
+a) Using the different values of Distortion.
+\
+b) Using the different values of Inertia.
+k = 1.
+
+\
+
+
